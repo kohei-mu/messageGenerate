@@ -20,6 +20,7 @@ from email.utils import formatdate
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+import pya3rt
 
 try:
     import argparse
@@ -154,4 +155,49 @@ class GmailSend():
         smtpobj.close()
 
 
+class TextCorrection():
+    def __init__(self,doc=None):
+        self.doc = doc
+
+    def get_sent(self):
+        sentences = self.doc.split("。")
+        return sentences
+
+    def get_ret(self):
+        rets = []
+        sentences = self.get_sent()
+        for sentence in sentences:
+            rets.append(self.sent_correct(sentence))
+        return rets
+
+    def sent_correct(self, sentence):
+        apikey = "EgZ4Uggpc6O9fpinSB1oG1C4x5VXzeTh"
+        client = pya3rt.ProofreadingClient(apikey)
+        ret = client.proofreading(sentence)
+        status = ret["status"]
+        if status == 1:
+            checkedSentence = ret["alerts"][0]["checkedSentence"]
+            alertDetail = ret["alerts"][0]["alertDetail"]
+            checkedWord = ret["alerts"][0]["word"]
+            alertCode = ret["alerts"][0]["alertCode"]
+            ret_pair = [sentence, status, checkedSentence, alertDetail, checkedWord, alertCode]
+        else:
+            ret_pair = [sentence, status]
+        return ret_pair
+
+
+class wordSuggest():
+    def __init__(self, rets=None):
+        self.rets = rets
+
+    def word_suggest(self):
+        suggestedRets = []
+        for ret in self.rets:
+            if ret[1] == 1:
+                if ret[5] == 0 or ret[5] == 1:
+                    suggestedWord = self.wordSuggest(ret[4])
+                    ret.append(suggestedWord)
+            suggestedRets.append(ret)
+
+    return suggestedRets
 
