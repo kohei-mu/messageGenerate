@@ -171,7 +171,7 @@ class TextCorrection():
         return rets
 
     def sent_correct(self, sentence):
-        apikey = "EgZ4Uggpc6O9fpinSB1oG1C4x5VXzeTh"
+        apikey = "<apikey>"
         client = pya3rt.ProofreadingClient(apikey)
         ret = client.proofreading(sentence)
         status = ret["status"]
