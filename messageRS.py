@@ -21,6 +21,7 @@ from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import pya3rt
+import gensim
 
 try:
     import argparse
@@ -187,8 +188,9 @@ class TextCorrection():
 
 
 class wordSuggest():
-    def __init__(self, rets=None):
+    def __init__(self, rets=None, model=None):
         self.rets = rets
+        self.model = gensim.models.word2vec.Word2Vec.load(model)
 
     def word_suggest(self):
         suggestedRets = []
@@ -198,6 +200,10 @@ class wordSuggest():
                     suggestedWord = self.wordSuggest(ret[4])
                     ret.append(suggestedWord)
             suggestedRets.append(ret)
+    def wordSuggest(self,word):
+
+        suggestedWords = self.model.most_similar(positive=word)
+        return suggestedWords
 
     return suggestedRets
 
