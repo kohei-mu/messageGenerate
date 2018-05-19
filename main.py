@@ -42,7 +42,7 @@ else:
     logger.info("mail is delivered, continue the program")
     #import libraries
     from mail_process import UpdateMailStatus,MailSend
-    from ml_process import TextCorrection,WordSuggestion
+    from ml_process import TextCorrection
 
 #get mail ids if unread mails exist
 if mailList != []:
@@ -58,26 +58,19 @@ except:
 
 #correct document and suggest words
 textCorrect = TextCorrection()
-wordSuggest = WordSuggestion(model="entity_vector.model.bin")
 corrected_dic = {}
 logger.info("ML process start")
 for mail in mails:
     subject = mail[0]
     body = mail[1]
-    #print(body)
     try:
         correctedBody = textCorrect.getCorrection(doc=body)
         logger.info("text correction process excuted")
     except:
         logger.warning("some problem occured in text correction process")
 
-    try:
-        suggested = wordSuggest.getSuggestion(rets=correctedBody)
-        logger.info("word suggestion process excuted")
-    except:
-        logger.warning("some problem occured in word suggestion process")
-
-    corrected_dic[subject] = suggested
+    corrected_dic[subject] = correctedBody
+    print(corrected_dic)
 logger.info("ML process end")
 
 
@@ -88,15 +81,13 @@ try:
     for subject,bodies in corrected_dic.items():
         shapedList = []
         for body in bodies:
-            if body[1] == 0: #if no need to correct words
+            if len(body) == 1:  # if no need to correct words
                 bodyShaped = "本文 (訂正無) : " + body[0] + "\n"
             else:
                 _body = "本文 (訂正有) : " + body[0] + "\n"
-                correctedBody = "訂正文 : " + body[2] + "\n"
-                comment = "訂正レベル : " + body[3] + "\n"
-                suggested = "推薦 (推薦語,類似度) : " + str(body[6]) + "\n"
-                bodyShaped = [_body,correctedBody, comment, suggested]
-
+                correctedBody = "訂正文 : " + body[1] + "\n"
+                suggested = "推薦 (訂正後、推薦語) : " + "　/　 ".join(body[2]) + "\n"
+                bodyShaped = [_body, correctedBody, suggested]
             shapedList.append(bodyShaped)
         shapedCorrected_dic["Re:" + subject] = shapedList
     logger.info("mail shaping process end")
