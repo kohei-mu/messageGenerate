@@ -3,7 +3,7 @@
 * developed GUI for interface using FastAPI & Jinja2
 
 ## GUI samples
-### OK
+### Correct Input
 ![OK](ok-grammar.png)
-### NG
+### Incorrect Input & Correction Result
 ![NG](ng-grammar.png) 
