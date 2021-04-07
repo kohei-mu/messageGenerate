@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>日本語文法チェッカー</title>
+</head>
+<body>
+<h1>日本語文法チェッカー</h1>
+
+<form method="post">
+    <textarea type="text" name="text"  rows="5" cols="60" required>{{ text }}</textarea> <br/>
+    <input type="submit" value="文法チェック">
+</form>
+
+<br/>
+
+<h3>{{ comment1 }}</h3>
+<div>
+   <span style="background-color:{{ color }};">{{ result }}</span>
+</div>
+
+<br/>
+
+<h3>{{ comment2 }}</h3>
+<div>
+   <span style="background-color:{{ color }};">{{ correction }}</span>
+</div>
+
+</body>
+</html>
